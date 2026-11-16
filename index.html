@@ -353,25 +353,25 @@ function modal(html){$("#modal").innerHTML=`<div class="modalbg" data-act="close
 function closeModal(){$("#modal").innerHTML=""}
 
 function taskForm(){
- modal(`<h3>📋 新增任務</h3><form data-form="task">
+ modal(`<h3>📋 新增任務</h3><form data-form="task" novalidate>
   <label>任務名稱</label><input name="title" required maxlength="40" autofocus>
   <div class="two"><div><label>類別</label><select name="cat">${["家事","採買","帳單","寵物","照護","其他"].map(c=>`<option>${c}</option>`).join("")}</select></div>
   <div><label>負責人</label><select name="assignee"><option value="pp">${esc(S.players.pp.name)}</option><option value="tt">${esc(S.players.tt.name)}</option><option value="both">一起（各得 XP）</option></select></div></div>
   <div class="three"><div><label>難度</label><select name="diff"><option value="1">★ 10XP</option><option value="2">★★ 20XP</option><option value="3">★★★ 40XP</option></select></div>
   <div><label>期限</label><input type="date" name="due" value="${today()}"></div>
   <div><label>重複</label><select name="repeat"><option value="none">不重複</option><option value="daily">每天</option><option value="weekly">每週</option></select></div></div>
-  <div class="bar2" style="margin-top:12px"><button class="btn g" type="submit">加入任務</button><button class="btn" type="button" data-act="closeModal">取消</button></div></form>`);
+  <div class="bar2" style="margin-top:12px"><button class="btn g" type="button" data-act="submitForm">加入任務</button><button class="btn" type="button" data-act="closeModal">取消</button></div></form>`);
 }
 function eventForm(e){
  e=e||{title:"",date:cal.sel,start:"",end:"",loc:"",who:"both",note:"",rem:30,rep:"none",repEnd:""};
- modal(`<h3>${calIcon(24)} ${e.id?"編輯":"新增"}行程</h3><form data-form="event" data-id="${e.id||""}">
+ modal(`<h3>${calIcon(24)} ${e.id?"編輯":"新增"}行程</h3><form data-form="event" data-id="${e.id||""}" novalidate>
   <label>行程名稱</label><input name="title" required maxlength="40" value="${esc(e.title)}">
   <div class="three"><div><label>日期</label><input type="date" name="date" required value="${e.date}"></div><div><label>開始</label><input type="time" name="start" value="${e.start}"></div><div><label>結束</label><input type="time" name="end" value="${e.end}"></div></div>
   <div class="two"><div><label>地點</label><input name="loc" value="${esc(e.loc)}"></div><div><label>參與者</label><select name="who"><option value="both" ${e.who==="both"?"selected":""}>兩人</option><option value="pp" ${e.who==="pp"?"selected":""}>${esc(S.players.pp.name)}</option><option value="tt" ${e.who==="tt"?"selected":""}>${esc(S.players.tt.name)}</option></select></div></div>
   <div class="two"><div><label>🔁 重複週期</label><select name="rep">${Object.entries(REP).map(([k,v])=>`<option value="${k}" ${(e.rep||"none")===k?"selected":""}>${v}</option>`).join("")}</select></div><div><label>重複至（選填）</label><input type="date" name="repEnd" value="${e.repEnd||""}"></div></div>
   <div class="two"><div><label>⏰ 提醒</label><select name="rem">${Object.entries(REM).map(([k,v])=>`<option value="${k}" ${String(e.rem==null?30:e.rem)===k?"selected":""}>${v}</option>`).join("")}</select></div><div><label>備註</label><input name="note" value="${esc(e.note)}"></div></div>
   <div class="sm" style="margin-top:6px">提醒會在頁面開啟時以彈窗／瀏覽器通知顯示（整天行程以 09:00 計算）。</div>
-  <div class="bar2" style="margin-top:12px"><button class="btn g" type="submit">儲存</button><button class="btn" type="button" data-act="closeModal">取消</button></div></form>`);
+  <div class="bar2" style="margin-top:12px"><button class="btn g" type="button" data-act="submitForm">儲存</button><button class="btn" type="button" data-act="closeModal">取消</button></div></form>`);
 }
 function pickForm(pid){
  const cur=S.players[pid].sp;
@@ -381,20 +381,25 @@ function pickForm(pid){
 function speciesForm(sp){
  sp=sp||{line:"",type:"一般",c1:"#ff9d5c",c2:"#ffe3b0",ear:"point",n:["","",""],t1:100,t2:300,img:["","",""]};
  const im=sp.img||["","",""];
- modal(`<h3>📖 ${sp.id?"編輯":"新增"}夥伴</h3><form data-form="species" data-id="${sp.id||""}">
+ modal(`<h3>📖 ${sp.id?"編輯":"新增"}夥伴</h3><form data-form="species" data-id="${sp.id||""}" novalidate>
   <div class="two"><div><label>系列名稱</label><input name="line" required maxlength="10" value="${esc(sp.line)}"></div><div><label>屬性</label><input name="type" maxlength="6" value="${esc(sp.type)}"></div></div>
   <div class="three"><div><label>第 1 型態名稱</label><input name="n0" required maxlength="10" value="${esc(sp.n[0])}"></div><div><label>第 2 型態名稱</label><input name="n1" required maxlength="10" value="${esc(sp.n[1])}"></div><div><label>第 3 型態名稱</label><input name="n2" required maxlength="10" value="${esc(sp.n[2])}"></div></div>
   <div class="three"><div><label>主色</label><input type="color" name="c1" value="${sp.c1}"></div><div><label>副色</label><input type="color" name="c2" value="${sp.c2}"></div><div><label>造型</label><select name="ear">${Object.entries(EARS).map(([k,v])=>`<option value="${k}" ${sp.ear===k?"selected":""}>${v}</option>`).join("")}</select></div></div>
   <div class="two"><div><label>第 2 型態所需 XP</label><input type="number" name="t1" min="10" value="${sp.t1}"></div><div><label>第 3 型態所需 XP</label><input type="number" name="t2" min="20" value="${sp.t2}"></div></div>
   <label>自訂圖片網址（選填，三個型態；空白則使用向量造型）</label>
   ${[0,1,2].map(i=>`<div style="display:flex;gap:6px;margin-top:4px;align-items:center"><input name="i${i}" placeholder="型態 ${i+1} 圖片 URL 或選本機圖片" value="${esc(im[i])}"><input type="file" accept="image/*" data-up="i${i}" style="width:120px;border:0;padding:0;font-size:12px"></div>`).join("")}
-  <div class="bar2" style="margin-top:12px"><button class="btn g" type="submit">儲存</button><button class="btn" type="button" data-act="closeModal">取消</button></div></form>`);
+  <div class="bar2" style="margin-top:12px"><button class="btn g" type="button" data-act="submitForm">儲存</button><button class="btn" type="button" data-act="closeModal">取消</button></div></form>`);
 }
 
 /* ============ 表單送出 ============ */
-document.addEventListener("submit",ev=>{
- const f=ev.target.closest("form[data-form]");if(!f)return;ev.preventDefault();
+document.addEventListener("submit",ev=>{const f=ev.target.closest("form[data-form]");if(!f)return;ev.preventDefault();handleForm(f)});
+document.addEventListener("keydown",ev=>{if(ev.key==="Enter"&&ev.target.tagName==="INPUT"&&ev.target.type!=="file"){const f=ev.target.closest("form[data-form]");if(f){ev.preventDefault();handleForm(f)}}});
+function handleForm(f){
  const d=Object.fromEntries(new FormData(f));
+ const bad=(m,n)=>{toast(m,2500);try{f.elements[n].focus()}catch(x){}};
+ if(f.dataset.form==="task"&&!(d.title||"").trim())return bad("請先輸入任務名稱","title");
+ if(f.dataset.form==="event"){if(!(d.title||"").trim())return bad("請先輸入行程名稱","title");if(!d.date)return bad("請選擇日期","date")}
+ if(f.dataset.form==="species"){if(!(d.line||"").trim())return bad("請輸入系列名稱","line");for(const k of["n0","n1","n2"])if(!(d[k]||"").trim())return bad("請填寫三個型態的名稱",k)}
  if(f.dataset.form==="task"){
   S.tasks.push({id:uid(),title:d.title.trim(),cat:d.cat,assignee:d.assignee,diff:+d.diff,repeat:d.repeat,due:d.due,done:false,u:now()});
   toast("新任務出現了！");
@@ -411,7 +416,7 @@ document.addEventListener("submit",ev=>{
   toast("圖鑑已更新！");
  }
  closeModal();render();flushEvo();schedulePush();
-});
+}
 
 /* ============ 行為 ============ */
 function delItem(k,id){S[k]=S[k].filter(x=>x.id!==id);S.deleted[id]=now()}
@@ -461,6 +466,7 @@ const ACT={
    ids.forEach(p=>{S.players[p].xp=0;S.players[p].u=now()});
    logAdd(`${names} 的經驗值已重置為 0`);toast(`${names} 的經驗值已歸零`);done_()});
   return"noRender"},
+ submitForm:(b,ev)=>{const f=ev.target.closest("form");if(f)handleForm(f);return"noRender"},
  closeModal:()=>closeModal(),
  closeBg:(b,ev)=>{if(ev.target.classList.contains("modalbg"))closeModal();return"noRender"},
  saveUrl:()=>{S.syncUrl=$("#syncUrl").value.trim();toast("網址已儲存");if(S.syncUrl)pull(true)},
@@ -549,6 +555,8 @@ function checkReminders(){
  if(fired){save();render()}
 }
 setInterval(checkReminders,20000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){checkReminders();if(S.syncUrl&&!$("#modal").innerHTML)pull(true)}});
+window.addEventListener("pageshow",()=>{if(S.syncUrl&&!$("#modal").innerHTML)pull(true)});
 window.addEventListener("storage",e=>{if(e.key===KEY){S=load();render()}});
 setInterval(()=>{if(S.syncUrl&&navigator.onLine&&!$("#modal").innerHTML)pull(true)},60000);
 
