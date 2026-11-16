@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>屁吐星球 🪐</title>
+<style>
+:root{--ink:#1b1b2f;--paper:#fffdf5;--red:#ee4b4b;--blue:#3b6fe0;--yellow:#ffcb05;--green:#35b36b;--pp:#ff7eb6;--tt:#3dd6c0;--mut:#6b6b85}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color:var(--ink);min-height:100vh;
+ background:radial-gradient(1.5px 1.5px at 20% 30%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 70% 20%,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 85% 70%,#ffe27a 50%,transparent 51%),radial-gradient(1px 1px at 40% 80%,#fff 50%,transparent 51%),linear-gradient(#141a3d,#25306b 60%,#3a2c6e);background-size:260px 260px,180px 180px,320px 320px,220px 220px,100% 100%;background-attachment:fixed;padding-bottom:110px}
+.wrap{max-width:1000px;margin:0 auto;padding:12px}
+h1{margin:6px 0 2px;color:#fff;font-size:30px;letter-spacing:3px;text-shadow:3px 3px 0 var(--red),6px 6px 0 var(--ink)}
+.sub{color:#cfd6ff;font-size:13px;margin-bottom:10px}
+.box{background:var(--paper);border:4px solid var(--ink);border-radius:14px;box-shadow:0 5px 0 var(--ink);padding:12px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>*{flex:1 1 300px}
+.trainer{position:relative;display:flex;gap:10px;align-items:center;cursor:pointer;transition:.15s}
+.trainer.active{outline:5px solid var(--yellow);transform:translateY(-2px)}
+.trainer .tag{position:absolute;top:-12px;right:10px;background:var(--yellow);border:3px solid var(--ink);border-radius:8px;font-size:12px;font-weight:800;padding:0 8px}
+.trainer .info{flex:1;min-width:0}
+.nm{font-weight:900;font-size:19px}
+.pill{display:inline-block;border:2px solid var(--ink);border-radius:20px;padding:0 8px;font-size:12px;font-weight:700;background:#fff;margin-right:4px}
+.bar{height:14px;border:3px solid var(--ink);border-radius:9px;background:#ddd;overflow:hidden;margin:5px 0}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,#46d37f,#9be15d);transition:width .6s}
+.sm{font-size:12px;color:var(--mut)}
+.bob{animation:bob 1.7s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-5px)}}
+.tabs{display:flex;gap:6px;margin:14px 0 8px;flex-wrap:wrap}
+.tab{flex:1;border:4px solid var(--ink);background:#e9ecff;border-radius:12px;padding:8px 4px;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 4px 0 var(--ink);font-family:inherit}
+.tab.on{background:var(--yellow)}
+button{font-family:inherit}
+.btn{border:3px solid var(--ink);background:#fff;border-radius:10px;padding:6px 12px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 var(--ink);font-size:14px}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.btn.r{background:var(--red);color:#fff}.btn.b{background:var(--blue);color:#fff}.btn.g{background:var(--green);color:#fff}.btn.y{background:var(--yellow)}
+.btn.s{padding:2px 8px;font-size:12px}
+.bar2{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.chip{border:2px solid var(--ink);border-radius:20px;padding:2px 10px;font-weight:700;font-size:13px;background:#fff;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff}
+.item{display:flex;gap:10px;align-items:center;border:3px solid var(--ink);border-radius:12px;padding:8px 10px;margin:8px 0;background:#fff}
+.item.done{opacity:.55;background:#e9f9ee}
+.item .t{flex:1;min-width:0}
+.item .t b{font-size:16px;word-break:break-all}
+.who{display:inline-block;border:2px solid var(--ink);border-radius:8px;padding:0 6px;font-size:12px;font-weight:800;color:#fff}
+.who.pp{background:var(--pp)}.who.tt{background:var(--tt);color:var(--ink)}.who.both{background:linear-gradient(90deg,var(--pp),var(--tt));color:var(--ink)}
+.over{color:var(--red);font-weight:800}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .h{text-align:center;font-weight:800;font-size:13px}
+.cal .d{min-height:54px;border:2px solid var(--ink);border-radius:8px;background:#fff;padding:2px 4px;cursor:pointer;font-size:13px;font-weight:700}
+.cal .d.o{opacity:.35}.cal .d.today{background:#fff3b0}.cal .d.sel{outline:4px solid var(--blue)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ink);margin-right:2px}
+.dot.ok{background:var(--green)}.dot.wait{background:var(--yellow)}.dot.bad{background:var(--red)}
+.cf{display:inline-flex;align-items:center;gap:3px;border:2px solid var(--ink);border-radius:8px;padding:0 6px;font-size:12px;font-weight:800;background:#fff;margin-right:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.sp{border:3px solid var(--ink);border-radius:12px;padding:8px;background:#fff;text-align:center}
+.sp .st{display:flex;justify-content:center;align-items:flex-end}
+.sp{position:relative}
+.more{position:absolute;top:4px;left:4px;width:30px;height:26px;border:3px solid var(--ink);border-radius:8px;background:#fff;font-weight:900;line-height:1;cursor:pointer;font-size:16px;padding:0;z-index:2}
+.menu{display:none;position:absolute;top:34px;left:4px;z-index:3;background:var(--paper);border:3px solid var(--ink);border-radius:10px;padding:5px;box-shadow:0 3px 0 var(--ink);flex-direction:column;gap:5px;text-align:left}
+.menu.open{display:flex}
+.sp.sel{outline:4px solid var(--yellow)}
+.modalbg{position:fixed;inset:0;background:rgba(10,10,30,.7);z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 10px}
+.modal{width:100%;max-width:640px}
+.modal h3{margin:0 0 8px}
+label{display:block;font-weight:800;font-size:13px;margin:8px 0 2px}
+input,select,textarea{width:100%;border:3px solid var(--ink);border-radius:8px;padding:6px 8px;font-size:15px;font-family:inherit;background:#fff}
+input[type=color]{padding:0;height:36px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#msg{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(94vw,640px);z-index:80;background:#fff;border:5px solid var(--ink);border-radius:14px;box-shadow:0 0 0 3px #fff inset,0 6px 0 var(--ink);padding:12px 16px;font-weight:800;display:none}
+#msg:after{content:"▼";position:absolute;right:12px;bottom:6px;animation:bl .8s infinite}
+@keyframes bl{50%{opacity:0}}
+#evo{position:fixed;inset:0;z-index:100;background:#000;color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+#evo .art{filter:brightness(1)}
+#evo.flash .art{animation:fl .35s infinite alternate}
+@keyframes fl{from{filter:brightness(1)}to{filter:brightness(8) contrast(0)}}
+#evo .txt{font-size:20px;font-weight:800;margin:18px 0;min-height:56px}
+.logline{font-size:13px;border-bottom:1px dashed #bbb;padding:3px 0}
+.empty{text-align:center;color:var(--mut);padding:18px}
+.warn{color:var(--red);font-weight:800;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🪐 屁吐星球</h1>
+  <div class="sub">屁屁 × 吐吐 的家庭任務與行程冒險 ・ 完成任務讓夥伴進化吧！<span id="syncst"></span></div>
+  <div id="app"></div>
+</div>
+<div id="msg"></div>
+<div id="evo"></div>
+<div id="modal"></div>
+
+<script>
+"use strict";
+/* ============ 工具 ============ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const now=()=>Date.now();
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const today=()=>ymd(new Date());
+const addDays=(s,n)=>{const d=new Date((s||today())+"T00:00:00");d.setDate(d.getDate()+n);return ymd(d)};
+const PID=["pp","tt"];
+const KEY="pitu-planet-v1";
+
+/* ============ 原創夥伴圖鑑（內建） ============ */
+const BUILTIN=[
+ {id:"flare",line:"焰系",type:"火",c1:"#ff8a4c",c2:"#ffd166",ear:"flame",n:["小焰仔","焰尾獸","烈焰王"]},
+ {id:"aqua",line:"潮系",type:"水",c1:"#4cc3ff",c2:"#d8f3ff",ear:"round",n:["泡泡仔","浪花獸","海潮龍"]},
+ {id:"leaf",line:"葉系",type:"草",c1:"#6fd26a",c2:"#e4ffb8",ear:"leaf",n:["芽芽","葉角鹿","森林守護"]},
+ {id:"volt",line:"電系",type:"電",c1:"#ffd84a",c2:"#fff4b0",ear:"bolt",n:["閃閃鼠","雷電狐","雷霆獸"]},
+ {id:"star",line:"星系",type:"超能",c1:"#b48cff",c2:"#ffe0f7",ear:"point",n:["星星貓","月影貓","銀河獅"]},
+ {id:"rock",line:"岩系",type:"岩",c1:"#b59a7a",c2:"#eadfca",ear:"horn",n:["石頭仔","岩甲獸","山嶽巨像"]},
+ {id:"frost",line:"雪系",type:"冰",c1:"#9fe3ff",c2:"#ffffff",ear:"round",n:["雪球仔","冰晶熊","極光熊王"]},
+ {id:"ghost",line:"幽系",type:"幽靈",c1:"#7a6bb8",c2:"#cfc6ff",ear:"antenna",n:["小幽","夜燈靈","幻影王"]}
+].map(s=>({...s,t1:100,t2:300}));
+const EARS={point:"尖耳",round:"圓耳",horn:"犄角",leaf:"葉片",flame:"火焰",bolt:"閃電觸角",antenna:"圓球觸角"};
+
+/* ============ 向量繪圖（原創造型） ============ */
+let gid=0;
+function shade(hex,amt){const n=parseInt(hex.slice(1),16);let r=(n>>16)+amt,g=((n>>8)&255)+amt,b=(n&255)+amt;const c=v=>Math.max(0,Math.min(255,v));return"#"+((1<<24)+(c(r)<<16)+(c(g)<<8)+c(b)).toString(16).slice(1)}
+function earsSvg(t,c1,c2,dk){
+ const S=`stroke="${dk}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+ switch(t){
+  case"round":return`<circle cx="36" cy="30" r="11" fill="${c1}" ${S}/><circle cx="84" cy="30" r="11" fill="${c1}" ${S}/><circle cx="36" cy="30" r="5" fill="${c2}"/><circle cx="84" cy="30" r="5" fill="${c2}"/>`;
+  case"horn":return`<path d="M44 32 Q34 8 46 0 Q50 18 56 30Z M76 32 Q86 8 74 0 Q70 18 64 30Z" fill="${c2}" ${S}/>`;
+  case"leaf":return`<path d="M60 28 Q38 -4 24 14 Q38 36 58 30Z M60 28 Q82 -4 96 14 Q82 36 62 30Z" fill="${c1}" ${S}/><path d="M56 26 Q40 14 32 16 M64 26 Q80 14 88 16" stroke="${c2}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  case"flame":return`<path d="M44 30 Q36 14 48 0 Q50 12 58 12 Q56 0 66 -6 Q76 8 72 30Z" fill="${c2}" ${S}/><path d="M54 28 Q52 18 60 12 Q66 20 64 28Z" fill="${c1}"/>`;
+  case"bolt":return`<path d="M44 30 L34 14 L46 16 L36 0 M76 30 L86 14 L74 16 L84 0" fill="none" stroke="${dk}" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><path d="M44 30 L34 14 L46 16 L36 0 M76 30 L86 14 L74 16 L84 0" fill="none" stroke="${c2}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+  case"antenna":return`<path d="M46 30 L38 8 M74 30 L82 8" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="38" cy="7" r="6" fill="${c2}" ${S}/><circle cx="82" cy="7" r="6" fill="${c2}" ${S}/>`;
+  default:return`<path d="M34 42 L34 6 L58 28Z M86 42 L86 6 L62 28Z" fill="${c1}" ${S}/><path d="M39 34 L39 16 L51 28Z M81 34 L81 16 L69 28Z" fill="${c2}"/>`;
+ }
+}
+function svgArt(sp,st,px){
+ px=px||120;const id="g"+(++gid),s=[.74,.88,1][st]||1,c1=sp.c1,c2=sp.c2,dk=shade(c1,-70);
+ const S=`stroke="${dk}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+ let back="";
+ if(st>=2){
+  back+=`<circle cx="60" cy="66" r="58" fill="url(#${id})"/>`;
+  back+=`<path d="M36 74 Q2 46 8 10 Q32 30 48 60Z M84 74 Q118 46 112 10 Q88 30 72 60Z" fill="${c2}" ${S}/>`;
+ }
+ if(st>=1){back+=`<path d="M82 98 Q118 92 108 54 Q100 80 80 84Z" fill="${c1}" ${S}/>`;if(st>=2)back+=`<circle cx="108" cy="52" r="8" fill="${c2}" ${S}/>`}
+ else back+=`<circle cx="86" cy="98" r="7" fill="${c1}" ${S}/>`;
+ let o=`<svg viewBox="0 0 120 120" width="${px}" height="${px}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible"><defs><radialGradient id="${id}"><stop offset="0" stop-color="${c2}" stop-opacity=".95"/><stop offset="1" stop-color="${c2}" stop-opacity="0"/></radialGradient></defs>`;
+ o+=`<g transform="translate(60 114) scale(${s}) translate(-60 -114)">${back}${earsSvg(sp.ear,c1,c2,dk)}`;
+ o+=`<ellipse cx="44" cy="109" rx="11" ry="6" fill="${c1}" ${S}/><ellipse cx="76" cy="109" rx="11" ry="6" fill="${c1}" ${S}/>`;
+ o+=`<ellipse cx="60" cy="88" rx="27" ry="23" fill="${c1}" ${S}/><ellipse cx="60" cy="94" rx="15" ry="13" fill="${c2}"/>`;
+ o+=`<ellipse cx="34" cy="88" rx="6" ry="9" fill="${c1}" ${S} transform="rotate(20 34 88)"/><ellipse cx="86" cy="88" rx="6" ry="9" fill="${c1}" ${S} transform="rotate(-20 86 88)"/>`;
+ o+=`<circle cx="60" cy="54" r="27" fill="${c1}" ${S}/>`;
+ if(st>=1)o+=`<path d="M60 33 L65 40 L60 47 L55 40Z" fill="${c2}" stroke="${dk}" stroke-width="2"/>`;
+ o+=`<ellipse cx="49" cy="54" rx="3.8" ry="5" fill="#222"/><ellipse cx="71" cy="54" rx="3.8" ry="5" fill="#222"/><circle cx="50.3" cy="52" r="1.5" fill="#fff"/><circle cx="72.3" cy="52" r="1.5" fill="#fff"/>`;
+ o+=`<circle cx="40" cy="64" r="4.5" fill="#ff9fb0" opacity=".85"/><circle cx="80" cy="64" r="4.5" fill="#ff9fb0" opacity=".85"/>`;
+ o+=`<path d="M55 64 Q60 69 65 64" stroke="#222" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>`;
+ if(st>=2)o+=`<text x="2" y="20" font-size="14" fill="#ffe27a">✦</text><text x="100" y="112" font-size="14" fill="#ffe27a">✦</text><text x="104" y="26" font-size="10" fill="#fff">✦</text>`;
+ return o+`</svg>`;
+}
+function art(sp,st,px){
+ px=px||120;
+ if(sp.img&&sp.img[st])return`<img src="${esc(sp.img[st])}" width="${px}" height="${px}" style="object-fit:contain" alt="" data-sp="${esc(sp.id)}" data-st="${st}" data-px="${px}" onerror="fallbackArt(this)">`;
+ return svgArt(sp,st,px);
+}
+function fallbackArt(el){const sp=findSp(el.dataset.sp);if(sp)el.outerHTML=svgArt(sp,+el.dataset.st,+el.dataset.px)}
+
+/* ============ 狀態 ============ */
+function freshState(){
+ const t=today();
+ const mk=(title,cat,who,diff,rep,due)=>({id:uid(),title,cat,assignee:who,diff,repeat:rep,due,done:false,u:now()});
+ return{
+  v:1,active:"pp",tab:"tasks",filter:"all",
+  players:{pp:{name:"屁屁",sp:"flare",xp:0,coins:0,done:0,u:now()},tt:{name:"吐吐",sp:"aqua",xp:0,coins:0,done:0,u:now()}},
+  tasks:[mk("倒垃圾","家事","pp",1,"daily",t),mk("洗碗","家事","tt",1,"daily",t),mk("週末大採買","採買","both",2,"weekly",addDays(t,3)),mk("繳水電費","帳單","tt",3,"none",addDays(t,5))],
+  events:[{id:uid(),title:"週末約會晚餐",date:addDays(t,2),start:"18:30",end:"20:30",loc:"",who:"both",note:"",rem:30,rep:"none",repEnd:"",rfd:"",u:now()}],
+  custom:BUILTIN.map(s=>({...s,u:now()})),seeded:true,deleted:{},log:[],syncUrl:"",lastSync:0
+ };
+}
+let S=load();
+function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.players){const s=Object.assign(freshState(),j);if(!j.seeded){BUILTIN.forEach(b=>{if(!s.custom.some(c=>c.id===b.id)&&!s.deleted[b.id])s.custom.push({...b,u:now()})});s.seeded=true}return s}}catch(e){}return freshState()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const allSp=()=>S.custom;
+const findSp=id=>allSp().find(s=>s.id===id);
+const spOf=pid=>findSp(S.players[pid].sp)||S.custom[0]||BUILTIN[0];
+const stageOf=(sp,xp)=>xp>=sp.t2?2:xp>=sp.t1?1:0;
+const logAdd=m=>{S.log.unshift({t:now(),m});S.log=S.log.slice(0,40)};
+
+/* ============ 提示訊息 ============ */
+let msgTimer;
+function toast(t,ms){const m=$("#msg");m.textContent=t;m.style.display="block";clearTimeout(msgTimer);msgTimer=setTimeout(()=>m.style.display="none",ms||3200)}
+$("#msg").onclick=()=>$("#msg").style.display="none";
+
+/* ============ 經驗／進化 ============ */
+let evoQ=[];
+function addXP(pid,amt,why){
+ const p=S.players[pid],sp=spOf(pid),before=stageOf(sp,p.xp);
+ p.xp+=amt;p.coins+=Math.round(amt/2);p.u=now();
+ const after=stageOf(sp,p.xp);
+ logAdd(`${p.name} ${why}，${sp.n[after]} 獲得 ${amt} XP`);
+ if(after>before)evoQ.push({pid,sp,from:sp.n[before],to:sp.n[after],b:before,a:after});
+}
+function flushEvo(){
+ const box=$("#evo");
+ if(!evoQ.length||box.style.display==="flex")return;
+ const e=evoQ.shift();
+ box.style.display="flex";box.className="flash";
+ box.innerHTML=`<div class="art">${art(e.sp,e.b,200)}</div><div class="txt">咦？${esc(S.players[e.pid].name)}的 ${esc(e.from)} 好像有些變化……</div>`;
+ setTimeout(()=>{
+  box.className="";
+  box.innerHTML=`<div class="art bob">${art(e.sp,e.a,220)}</div><div class="txt">🎉 恭喜！${esc(e.from)} 進化成了 ${esc(e.to)}！</div><button class="btn y" id="evoOk">太棒了！</button>`;
+  $("#evoOk").onclick=()=>{box.style.display="none";flushEvo()};
+ },2400);
+}
+
+/* ============ 畫面 ============ */
+function render(){
+ save();
+ $("#app").innerHTML=trainersHtml()+`<div class="tabs">${[["tasks","📋 家庭任務"],["cal","📅 行事曆確認"],["dex","📖 夥伴圖鑑"],["set","⚙️ 同步／設定"]].map(([k,n])=>`<button class="tab ${S.tab===k?"on":""}" data-act="tab" data-k="${k}">${n}</button>`).join("")}</div><div class="box">${S.tab==="tasks"?tasksHtml():S.tab==="cal"?calHtml():S.tab==="dex"?dexHtml():setHtml()}</div>`;
+ $("#syncst").textContent=S.syncUrl&&S.lastSync?`　☁️ 上次同步 ${new Date(S.lastSync).toLocaleTimeString()}`:"";
+}
+function trainersHtml(){
+ return`<div class="row">`+PID.map(pid=>{
+  const p=S.players[pid],sp=spOf(pid),st=stageOf(sp,p.xp);
+  let nxt="",pct=100;
+  if(st<2){const tgt=st===0?sp.t1:sp.t2,prev=st===0?0:sp.t1;pct=Math.max(2,Math.min(100,(p.xp-prev)/(tgt-prev)*100));nxt=`距離進化 ${tgt-p.xp} XP → ${sp.n[st+1]}`}else nxt="⭐ 最終型態";
+  return`<div class="box trainer ${S.active===pid?"active":""}" data-act="active" data-pid="${pid}">
+   ${S.active===pid?'<span class="tag">操作中</span>':""}
+   <div class="bob">${art(sp,st,96)}</div>
+   <div class="info"><div class="nm">${esc(p.name)} <span class="who ${pid}">${pid==="pp"?"P":"T"}</span></div>
+    <div><span class="pill">${esc(sp.n[st])}</span><span class="pill">${esc(sp.type)}</span><span class="pill">Lv.${1+Math.floor(p.xp/25)}</span></div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <div class="sm">${p.xp} XP ・ ${nxt}</div>
+    <div class="sm">🪙 ${p.coins} ・ 完成 ${p.done} 件 ・ <a href="#" data-act="pick" data-pid="${pid}" style="color:var(--blue);font-weight:800">換夥伴</a></div></div></div>`}).join("")+`</div>`;
+}
+const whoTag=w=>`<span class="who ${w}">${w==="both"?"一起":S.players[w].name}</span>`;
+const XPD={1:10,2:20,3:40};
+const GAS_CODE=`var P=PropertiesService.getScriptProperties(),N=2500;
+function doGet(){var n=+P.getProperty("n")||0,s="";for(var i=0;i<n;i++)s+=P.getProperty("c"+i)||"";return ContentService.createTextOutput(s||"{}").setMimeType(ContentService.MimeType.JSON)}
+function doPost(e){var l=LockService.getScriptLock();l.waitLock(15000);try{var s=e.postData.contents,old=+P.getProperty("n")||0,n=Math.ceil(s.length/N),o={n:String(n)};for(var i=0;i<n;i++)o["c"+i]=s.substr(i*N,N);P.setProperties(o);for(var j=n;j<old;j++)P.deleteProperty("c"+j);return ContentService.createTextOutput('{"ok":true}').setMimeType(ContentService.MimeType.JSON)}finally{l.releaseLock()}}`;
+
+function tasksHtml(){
+ const f=S.filter;
+ let list=S.tasks.filter(t=>f==="all"?!t.done:f==="done"?t.done:(!t.done&&(t.assignee===f||t.assignee==="both")));
+ list.sort((a,b)=>(a.due||"9").localeCompare(b.due||"9"));
+ const chips=[["all","未完成"],["pp","屁屁"],["tt","吐吐"],["done","已完成"]].map(([k,n])=>`<span class="chip ${f===k?"on":""}" data-act="filter" data-k="${k}">${n}</span>`).join("");
+ return`<div class="bar2"><b>家庭任務</b>${chips}<span style="flex:1"></span><button class="btn g" data-act="addTask">＋ 新任務</button></div>`+
+ (list.length?list.map(t=>{
+  const over=!t.done&&t.due&&t.due<today();
+  return`<div class="item ${t.done?"done":""}">
+   <div class="t"><b>${esc(t.title)}</b><div class="sm">${whoTag(t.assignee)} <span class="pill">${esc(t.cat)}</span><span class="pill">${"★".repeat(t.diff)} +${XPD[t.diff]}XP</span>${t.repeat!=="none"?`<span class="pill">🔁${t.repeat==="daily"?"每天":"每週"}</span>`:""}${t.due?`<span class="${over?"over":""}">📆 ${t.due}${over?" 逾期!":""}</span>`:""}${t.done?` ✔ ${esc(t.doneBy||"")}`:""}</div></div>
+   ${t.done?"":`<button class="btn g" data-act="doneTask" data-id="${t.id}">完成！</button>`}
+   <button class="btn s r" data-act="delTask" data-id="${t.id}">✕</button></div>`}).join(""):`<div class="empty">沒有任務，休息一下或新增一個吧 🌙</div>`)+
+ `<div style="margin-top:12px"><b>📜 冒險日誌</b>${S.log.slice(0,8).map(l=>`<div class="logline">${new Date(l.t).toLocaleString([], {month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}　${esc(l.m)}</div>`).join("")||'<div class="sm">尚無紀錄</div>'}</div>`;
+}
+
+/* --- 行事曆 --- */
+let cal={y:new Date().getFullYear(),m:new Date().getMonth(),sel:today()};
+const people=e=>e.who==="both"?PID:[e.who];
+const mins=t=>{if(!t)return null;const[h,m]=t.split(":").map(Number);return h*60+m};
+function span(e){let a=mins(e.start),b=mins(e.end);if(a==null){a=0;b=1440}else if(b==null||b<=a)b=a+1;return[a,b]}
+const REP={none:"不重複",daily:"每天",weekly:"每週",biweekly:"每兩週",monthly:"每月",yearly:"每年"};
+function occursOn(e,s){
+ if(s<e.date)return false;
+ if(s===e.date)return true;
+ const rp=e.rep||"none";if(rp==="none")return false;
+ if(e.repEnd&&s>e.repEnd)return false;
+ const A=new Date(e.date+"T00:00:00"),B=new Date(s+"T00:00:00");
+ const diff=Math.round((B-A)/864e5);
+ if(rp==="daily")return true;
+ if(rp==="weekly")return diff%7===0;
+ if(rp==="biweekly")return diff%14===0;
+ if(rp==="yearly")return A.getMonth()===B.getMonth()&&A.getDate()===B.getDate();
+ if(rp==="monthly"){const last=new Date(B.getFullYear(),B.getMonth()+1,0).getDate();return B.getDate()===Math.min(A.getDate(),last)}
+ return false;
+}
+const evsOn=s=>S.events.filter(e=>occursOn(e,s));
+function conflicts(e,date){
+ const[a,b]=span(e);date=date||e.date;
+ return S.events.filter(o=>o.id!==e.id&&occursOn(o,date)&&people(o).some(p=>people(e).includes(p))&&(([c,d])=>a<d&&c<b)(span(o)));
+}
+const REM={"-1":"不提醒","0":"開始時","10":"10 分鐘前","30":"30 分鐘前","60":"1 小時前","180":"3 小時前","1440":"1 天前"};
+function calHtml(){
+ const first=new Date(cal.y,cal.m,1),start=new Date(cal.y,cal.m,1-first.getDay());
+ let cells="";
+ for(let i=0;i<42;i++){
+  const d=new Date(start);d.setDate(start.getDate()+i);const s=ymd(d);
+  const evs=evsOn(s);
+  cells+=`<div class="d ${d.getMonth()!==cal.m?"o":""} ${s===today()?"today":""} ${s===cal.sel?"sel":""}" data-act="selDay" data-d="${s}">${d.getDate()}<div>${evs.slice(0,4).map(e=>`<span class="dot ${conflicts(e,s).length?"bad":"ok"}"></span>`).join("")}</div></div>`;
+ }
+ const day=evsOn(cal.sel).sort((a,b)=>(a.start||"").localeCompare(b.start||""));
+ return`<div class="bar2"><button class="btn s" data-act="calPrev">◀</button><b style="font-size:18px">${cal.y} 年 ${cal.m+1} 月</b><button class="btn s" data-act="calNext">▶</button><span style="flex:1"></span><button class="btn g" data-act="addEvent">＋ 新行程</button></div>
+ <div class="cal">${"日一二三四五六".split("").map(x=>`<div class="h">${x}</div>`).join("")}${cells}</div>
+ <div class="sm" style="margin:6px 0"><span class="dot ok"></span>已排定 <span class="dot bad"></span>時間重疊</div>
+ <b>${cal.sel} 的行程</b>`+(day.length?day.map(e=>evHtml(e,cal.sel)).join(""):`<div class="empty">這天沒有行程</div>`);
+}
+function evHtml(e,date){
+ const cf=conflicts(e,date),r=e.rem==null?-1:e.rem;
+ return`<div class="item">
+  <div class="t"><b>${esc(e.title)}</b>
+   <div class="sm">${e.start?`🕒 ${e.start}${e.end?"–"+e.end:""}`:"🕒 整天"} ${e.loc?`📍${esc(e.loc)}`:""} ${whoTag(e.who)} ${e.rep&&e.rep!=="none"?`<span class="pill">🔁 ${REP[e.rep]}${e.repEnd?" 至 "+e.repEnd:""}</span>`:""}${r>=0?`<span class="pill">⏰ ${REM[r]||r+" 分鐘前"}</span>`:""}</div>
+   ${e.note?`<div class="sm">📝 ${esc(e.note)}</div>`:""}
+   ${cf.length?`<div class="warn">⚠️ 與「${cf.map(c=>esc(c.title)).join("、")}」時間重疊</div>`:""}</div>
+  <div style="display:flex;flex-direction:column;gap:4px"><button class="btn s" data-act="editEvent" data-id="${e.id}">編輯</button><button class="btn s r" data-act="delEvent" data-id="${e.id}">刪除</button></div></div>`;
+}
+
+/* --- 圖鑑 --- */
+function dexHtml(){
+ return`<div class="bar2"><b>夥伴圖鑑（${allSp().length}）</b><span class="sm">全部都可自行編輯、刪除</span><span style="flex:1"></span><button class="btn s" data-act="restoreSp">恢復內建夥伴</button> <button class="btn g" data-act="addSpecies">＋ 新增夥伴</button></div><div class="grid">`+
+ allSp().map(sp=>`<div class="sp">
+  <div class="st">${[0,1,2].map(i=>`<div style="margin:0 -6px">${art(sp,i,[56,66,80][i])}</div>`).join("")}</div>
+  <b>${esc(sp.line)}</b> <span class="pill">${esc(sp.type)}</span>
+  <div class="sm">${sp.n.map(esc).join(" → ")}</div>
+  <div class="sm">進化：${sp.t1} / ${sp.t2} XP</div>
+  <button class="more" data-act="menu" title="更多">⋯</button><div class="menu"><button class="btn s" data-act="editSpecies" data-id="${sp.id}">✏️ 編輯</button><button class="btn s r" data-act="delSpecies" data-id="${sp.id}">🗑 刪除</button></div>
+  <div class="sm">${PID.filter(p=>S.players[p].sp===sp.id).map(p=>S.players[p].name+" 使用中").join("、")}</div>
+  </div>`).join("")+`</div>`;
+}
+
+/* --- 設定 --- */
+function setHtml(){
+ return`<b>☁️ 網路同步</b>
+ <div class="sm">用 Google 雲端硬碟讓兩支手機自動同步：資料會存在你自己的 Google Apps Script 專案裡（不需要雲端硬碟權限）。修改內容後約 3 秒自動上傳，頁面開著時每分鐘自動更新。</div>
+ <details style="margin:8px 0"><summary class="btn s" style="display:inline-block">📖 Google 雲端硬碟設定教學（只需做一次）</summary>
+  <ol class="sm" style="line-height:1.7;padding-left:20px">
+   <li>用 Google 帳號開啟 <b>script.google.com</b> → 「新專案」。</li>
+   <li>刪掉原有內容，貼上下方程式碼（按「複製程式碼」），按存檔。</li>
+   <li>右上「部署」→「新增部署作業」→ 類型選「網頁應用程式」。</li>
+   <li>「執行身分」選<b>我</b>；「誰可以存取」選<b>所有人</b> → 部署。若出現授權畫面，請選你的帳號並允許；沒出現就不用管。</li>
+   <li>複製「網頁應用程式網址」（結尾是 /exec），貼到下方「同步網址」並儲存。</li>
+   <li>另一支手機也貼同一個網址即可。</li>
+  </ol>
+  <textarea readonly rows="5" style="font-size:12px" onclick="this.select()">${esc(GAS_CODE)}</textarea>
+  <button class="btn s y" data-act="copyGas" style="margin-top:4px">複製程式碼</button>
+  <div class="sm">⚠️ 知道這個網址的人都能讀寫資料，請只分享給彼此，別公開。</div></details>
+ <label>同步網址</label><input id="syncUrl" value="${esc(S.syncUrl)}" placeholder="https://script.google.com/macros/s/…/exec">
+ <div class="bar2" style="margin-top:8px"><button class="btn b" data-act="saveUrl">儲存網址</button><button class="btn g" data-act="pull">⬇ 立即拉取</button><button class="btn y" data-act="push">⬆ 推送上傳</button></div>
+ <hr><b>💾 備份</b><div class="bar2" style="margin-top:6px"><button class="btn" data-act="export">匯出 JSON</button><button class="btn" data-act="import">匯入 JSON（合併）</button><input type="file" id="file" accept=".json,application/json" style="display:none"></div>
+ <hr><b>👤 名稱</b><div class="two"><div><label>玩家一</label><input id="n_pp" value="${esc(S.players.pp.name)}"></div><div><label>玩家二</label><input id="n_tt" value="${esc(S.players.tt.name)}"></div></div>
+ <div class="bar2" style="margin-top:8px"><button class="btn b" data-act="saveNames">儲存名稱</button><button class="btn r" data-act="reset">重置全部資料</button></div>`;
+}
+
+/* ============ 彈窗 ============ */
+function modal(html){$("#modal").innerHTML=`<div class="modalbg" data-act="closeBg"><div class="box modal">${html}</div></div>`}
+function closeModal(){$("#modal").innerHTML=""}
+
+function taskForm(){
+ modal(`<h3>📋 新增任務</h3><form data-form="task">
+  <label>任務名稱</label><input name="title" required maxlength="40" autofocus>
+  <div class="two"><div><label>類別</label><select name="cat">${["家事","採買","帳單","寵物","照護","其他"].map(c=>`<option>${c}</option>`).join("")}</select></div>
+  <div><label>負責人</label><select name="assignee"><option value="pp">${esc(S.players.pp.name)}</option><option value="tt">${esc(S.players.tt.name)}</option><option value="both">一起（各得 XP）</option></select></div></div>
+  <div class="three"><div><label>難度</label><select name="diff"><option value="1">★ 10XP</option><option value="2">★★ 20XP</option><option value="3">★★★ 40XP</option></select></div>
+  <div><label>期限</label><input type="date" name="due" value="${today()}"></div>
+  <div><label>重複</label><select name="repeat"><option value="none">不重複</option><option value="daily">每天</option><option value="weekly">每週</option></select></div></div>
+  <div class="bar2" style="margin-top:12px"><button class="btn g" type="submit">加入任務</button><button class="btn" type="button" data-act="closeModal">取消</button></div></form>`);
+}
+function eventForm(e){
+ e=e||{title:"",date:cal.sel,start:"",end:"",loc:"",who:"both",note:"",rem:30,rep:"none",repEnd:""};
+ modal(`<h3>📅 ${e.id?"編輯":"新增"}行程</h3><form data-form="event" data-id="${e.id||""}">
+  <label>行程名稱</label><input name="title" required maxlength="40" value="${esc(e.title)}">
+  <div class="three"><div><label>日期</label><input type="date" name="date" required value="${e.date}"></div><div><label>開始</label><input type="time" name="start" value="${e.start}"></div><div><label>結束</label><input type="time" name="end" value="${e.end}"></div></div>
+  <div class="two"><div><label>地點</label><input name="loc" value="${esc(e.loc)}"></div><div><label>參與者</label><select name="who"><option value="both" ${e.who==="both"?"selected":""}>兩人</option><option value="pp" ${e.who==="pp"?"selected":""}>${esc(S.players.pp.name)}</option><option value="tt" ${e.who==="tt"?"selected":""}>${esc(S.players.tt.name)}</option></select></div></div>
+  <div class="two"><div><label>🔁 重複週期</label><select name="rep">${Object.entries(REP).map(([k,v])=>`<option value="${k}" ${(e.rep||"none")===k?"selected":""}>${v}</option>`).join("")}</select></div><div><label>重複至（選填）</label><input type="date" name="repEnd" value="${e.repEnd||""}"></div></div>
+  <div class="two"><div><label>⏰ 提醒</label><select name="rem">${Object.entries(REM).map(([k,v])=>`<option value="${k}" ${String(e.rem==null?30:e.rem)===k?"selected":""}>${v}</option>`).join("")}</select></div><div><label>備註</label><input name="note" value="${esc(e.note)}"></div></div>
+  <div class="sm" style="margin-top:6px">提醒會在頁面開啟時以彈窗／瀏覽器通知顯示（整天行程以 09:00 計算）。</div>
+  <div class="bar2" style="margin-top:12px"><button class="btn g" type="submit">儲存</button><button class="btn" type="button" data-act="closeModal">取消</button></div></form>`);
+}
+function pickForm(pid){
+ const cur=S.players[pid].sp;
+ modal(`<h3>🎒 ${esc(S.players[pid].name)}選擇夥伴</h3><div class="sm">更換夥伴不會損失 XP，進化型態依目前 XP 決定。</div><div class="grid" style="margin-top:8px">`+
+ allSp().map(sp=>`<div class="sp ${sp.id===cur?"sel":""}"><div class="st">${[0,1,2].map(i=>`<div style="margin:0 -6px">${art(sp,i,[50,60,72][i])}</div>`).join("")}</div><b>${esc(sp.line)}</b> <span class="pill">${esc(sp.type)}</span><div class="sm">${sp.n.map(esc).join("→")}</div><button class="btn s y" data-act="choose" data-pid="${pid}" data-id="${sp.id}">就決定是你！</button></div>`).join("")+`</div><div class="bar2" style="margin-top:10px"><button class="btn" data-act="closeModal">關閉</button></div>`);
+}
+function speciesForm(sp){
+ sp=sp||{line:"",type:"一般",c1:"#ff9d5c",c2:"#ffe3b0",ear:"point",n:["","",""],t1:100,t2:300,img:["","",""]};
+ const im=sp.img||["","",""];
+ modal(`<h3>📖 ${sp.id?"編輯":"新增"}夥伴</h3><form data-form="species" data-id="${sp.id||""}">
+  <div class="two"><div><label>系列名稱</label><input name="line" required maxlength="10" value="${esc(sp.line)}"></div><div><label>屬性</label><input name="type" maxlength="6" value="${esc(sp.type)}"></div></div>
+  <div class="three"><div><label>第 1 型態名稱</label><input name="n0" required maxlength="10" value="${esc(sp.n[0])}"></div><div><label>第 2 型態名稱</label><input name="n1" required maxlength="10" value="${esc(sp.n[1])}"></div><div><label>第 3 型態名稱</label><input name="n2" required maxlength="10" value="${esc(sp.n[2])}"></div></div>
+  <div class="three"><div><label>主色</label><input type="color" name="c1" value="${sp.c1}"></div><div><label>副色</label><input type="color" name="c2" value="${sp.c2}"></div><div><label>造型</label><select name="ear">${Object.entries(EARS).map(([k,v])=>`<option value="${k}" ${sp.ear===k?"selected":""}>${v}</option>`).join("")}</select></div></div>
+  <div class="two"><div><label>第 2 型態所需 XP</label><input type="number" name="t1" min="10" value="${sp.t1}"></div><div><label>第 3 型態所需 XP</label><input type="number" name="t2" min="20" value="${sp.t2}"></div></div>
+  <label>自訂圖片網址（選填，三個型態；空白則使用向量造型）</label>
+  ${[0,1,2].map(i=>`<div style="display:flex;gap:6px;margin-top:4px;align-items:center"><input name="i${i}" placeholder="型態 ${i+1} 圖片 URL 或選本機圖片" value="${esc(im[i])}"><input type="file" accept="image/*" data-up="i${i}" style="width:120px;border:0;padding:0;font-size:12px"></div>`).join("")}
+  <div class="bar2" style="margin-top:12px"><button class="btn g" type="submit">儲存</button><button class="btn" type="button" data-act="closeModal">取消</button></div></form>`);
+}
+
+/* ============ 表單送出 ============ */
+document.addEventListener("submit",ev=>{
+ const f=ev.target.closest("form[data-form]");if(!f)return;ev.preventDefault();
+ const d=Object.fromEntries(new FormData(f));
+ if(f.dataset.form==="task"){
+  S.tasks.push({id:uid(),title:d.title.trim(),cat:d.cat,assignee:d.assignee,diff:+d.diff,repeat:d.repeat,due:d.due,done:false,u:now()});
+  toast("新任務出現了！");
+ }else if(f.dataset.form==="event"){
+  const id=f.dataset.id,base={title:d.title.trim(),date:d.date,start:d.start,end:d.end,loc:d.loc.trim(),who:d.who,note:d.note.trim(),rem:+d.rem,rep:d.rep,repEnd:d.rep==="none"?"":(d.repEnd||""),rfd:"",u:now()};
+  if(id){Object.assign(S.events.find(x=>x.id===id),base);toast("行程已更新")}
+  else{S.events.push({id:uid(),...base});toast("行程已新增！")}
+  if(base.rem>=0&&"Notification" in window&&Notification.permission==="default")Notification.requestPermission();
+  cal.sel=d.date;const dt=new Date(d.date+"T00:00:00");cal.y=dt.getFullYear();cal.m=dt.getMonth();
+  setTimeout(checkReminders,300);
+ }else if(f.dataset.form==="species"){
+  const id=f.dataset.id,o={line:d.line.trim(),type:d.type.trim()||"一般",c1:d.c1,c2:d.c2,ear:d.ear,n:[d.n0,d.n1,d.n2].map(x=>x.trim()),t1:Math.max(10,+d.t1||100),t2:Math.max(+d.t1+10,+d.t2||300),img:[d.i0,d.i1,d.i2].map(x=>x.trim()),u:now()};
+  if(id)Object.assign(S.custom.find(x=>x.id===id),o);else S.custom.push({id:"c"+uid(),...o});
+  toast("圖鑑已更新！");
+ }
+ closeModal();render();flushEvo();schedulePush();
+});
+
+/* ============ 行為 ============ */
+function delItem(k,id){S[k]=S[k].filter(x=>x.id!==id);S.deleted[id]=now()}
+
+const ACT={
+ tab:b=>{S.tab=b.k},
+ active:b=>{S.active=b.pid;},
+ filter:b=>{S.filter=b.k},
+ addTask:()=>taskForm(),
+ doneTask:b=>{
+  const t=S.tasks.find(x=>x.id===b.id);if(!t||t.done)return;
+  t.done=true;t.u=now();const xp=XPD[t.diff];
+  const ps=t.assignee==="both"?PID:[t.assignee];
+  t.doneBy=ps.map(p=>S.players[p].name).join("＆");
+  ps.forEach(p=>{addXP(p,xp,`完成了「${t.title}」`);S.players[p].done++});
+  toast(`✔「${t.title}」完成！${t.doneBy} 獲得 ${xp} XP`);
+  if(t.repeat!=="none")S.tasks.push({...t,id:uid(),done:false,doneBy:"",due:addDays(t.due,t.repeat==="daily"?1:7),u:now()});
+ },
+ delTask:b=>{if(confirm("刪除這個任務？"))delItem("tasks",b.id)},
+ calPrev:()=>{cal.m--;if(cal.m<0){cal.m=11;cal.y--}},
+ calNext:()=>{cal.m++;if(cal.m>11){cal.m=0;cal.y++}},
+ selDay:b=>{cal.sel=b.d},
+ addEvent:()=>eventForm(),
+ editEvent:b=>eventForm(S.events.find(x=>x.id===b.id)),
+ delEvent:b=>{const e=S.events.find(x=>x.id===b.id);if(confirm(e&&e.rep&&e.rep!=="none"?"這是重複行程，會刪除整個系列，確定嗎？":"刪除這個行程？"))delItem("events",b.id)},
+ pick:(b,ev)=>{ev.preventDefault();ev.stopPropagation();pickForm(b.pid);return"noRender"},
+ choose:b=>{S.players[b.pid].sp=b.id;S.players[b.pid].u=now();closeModal();const sp=findSp(b.id);toast(`${S.players[b.pid].name}選擇了 ${sp.line}！`)},
+ addSpecies:()=>speciesForm(),
+ editSpecies:b=>speciesForm(S.custom.find(x=>x.id===b.id)),
+ delSpecies:b=>{
+  if(S.custom.length<=1){toast("至少要保留一個夥伴");return}
+  if(!confirm("刪除這個夥伴？使用中的玩家會自動換成圖鑑第一個夥伴。"))return;
+  delItem("custom",b.id);
+  PID.forEach(p=>{if(!findSp(S.players[p].sp)){S.players[p].sp=S.custom[0].id;S.players[p].u=now()}})},
+ restoreSp:()=>{let n=0;BUILTIN.forEach(b=>{if(!S.custom.some(c=>c.id===b.id)){delete S.deleted[b.id];S.custom.push({...b,u:now()});n++}});toast(n?`已恢復 ${n} 個內建夥伴`:"內建夥伴都在圖鑑裡")},
+ menu:(b,ev)=>{const el=ev.target.closest(".sp").querySelector(".menu"),was=el.classList.contains("open");document.querySelectorAll(".menu.open").forEach(x=>x.classList.remove("open"));if(!was)el.classList.add("open");return"noRender"},
+ copyGas:()=>{const done=()=>toast("已複製程式碼");if(navigator.clipboard)navigator.clipboard.writeText(GAS_CODE).then(done,()=>{});else{const t=document.createElement("textarea");t.value=GAS_CODE;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();done()}return"noRender"},
+ closeModal:()=>closeModal(),
+ closeBg:(b,ev)=>{if(ev.target.classList.contains("modalbg"))closeModal();return"noRender"},
+ saveUrl:()=>{S.syncUrl=$("#syncUrl").value.trim();toast("網址已儲存");if(S.syncUrl)pull(true)},
+ pull:()=>{S.syncUrl=$("#syncUrl").value.trim();pull(false);return"noRender"},
+ push:()=>{S.syncUrl=$("#syncUrl").value.trim();push();return"noRender"},
+ export:()=>{
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(exportData(),null,1)],{type:"application/json"}));
+  a.download="屁吐星球-備份-"+today()+".json";a.click();return"noRender"},
+ import:()=>{$("#file").click();return"noRender"},
+ saveNames:()=>{S.players.pp.name=$("#n_pp").value.trim()||"屁屁";S.players.tt.name=$("#n_tt").value.trim()||"吐吐";PID.forEach(p=>S.players[p].u=now());toast("名稱已更新")},
+ reset:()=>{if(confirm("確定要清除所有資料並重來？")){localStorage.removeItem(KEY);location.reload()}return"noRender"}
+};
+document.addEventListener("click",ev=>{
+ if(!ev.target.closest(".more,.menu"))document.querySelectorAll(".menu.open").forEach(x=>x.classList.remove("open"));
+ const b=ev.target.closest("[data-act]");if(!b)return;
+ if(b.dataset.act==="active"&&ev.target.closest("a,button"))return;
+ const fn=ACT[b.dataset.act];if(!fn)return;
+ const r=fn(b.dataset,ev);
+ if(r!=="noRender"){render();if(!["tab","active","filter","calPrev","calNext","selDay","closeModal","menu","saveUrl","saveNames"].includes(b.dataset.act))schedulePush()}
+ flushEvo();
+});
+document.addEventListener("change",ev=>{
+ if(ev.target.dataset&&ev.target.dataset.up){
+  const f=ev.target.files[0],name=ev.target.dataset.up,form=ev.target.closest("form");if(!f)return;
+  const img=new Image(),u=URL.createObjectURL(f);
+  img.onload=()=>{const c=document.createElement("canvas"),k=Math.min(1,192/Math.max(img.width,img.height));c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);form.elements[name].value=c.toDataURL("image/png");URL.revokeObjectURL(u);toast("圖片已載入，記得按儲存")};
+  img.src=u;return;
+ }
+ if(ev.target.id==="file"){
+  const f=ev.target.files[0];if(!f)return;
+  f.text().then(t=>{try{mergeIn(JSON.parse(t));save();render();toast("匯入完成（已合併）")}catch(e){toast("匯入失敗：檔案格式不正確")}});
+  ev.target.value="";
+ }
+});
+
+/* ============ 同步 ============ */
+function exportData(){return{app:"pitu-planet",v:1,u:now(),players:S.players,tasks:S.tasks,events:S.events,custom:S.custom,deleted:S.deleted}}
+function mergeIn(r){
+ if(!r||typeof r!=="object")throw new Error("bad");
+ for(const[id,t]of Object.entries(r.deleted||{}))if(!S.deleted[id]||S.deleted[id]<t)S.deleted[id]=t;
+ for(const k of["tasks","events","custom"]){
+  const map=new Map(S[k].map(x=>[x.id,x]));
+  for(const x of(r[k]||[])){const l=map.get(x.id);if(!l||(x.u||0)>(l.u||0))map.set(x.id,x)}
+  S[k]=[...map.values()].filter(x=>!(S.deleted[x.id]&&S.deleted[x.id]>=(x.u||0)));
+ }
+ if(r.players)for(const p of PID){const rp=r.players[p];if(rp&&(rp.u||0)>(S.players[p].u||0))S.players[p]=rp}
+}
+async function pull(silent,quiet){
+ if(!S.syncUrl){if(!silent)toast("請先填寫同步網址");return}
+ try{
+  const res=await fetch(S.syncUrl,{cache:"no-store"});if(!res.ok)throw new Error(res.status);
+  mergeIn(await res.json());S.lastSync=now();save();if(!quiet)render();if(!silent)toast("☁️ 已同步最新資料");
+ }catch(e){if(!silent)toast("同步失敗：請確認網址可讀取且允許跨網域 (CORS)")}
+}
+const isGAS=u=>/script\.google(usercontent)?\.com/.test(u);
+let pushT;
+function schedulePush(){if(!S.syncUrl)return;clearTimeout(pushT);pushT=setTimeout(()=>push(true),3000)}
+async function push(silent){
+ if(!S.syncUrl){if(!silent)toast("請先填寫同步網址");return}
+ try{
+  await pull(true,true);
+  const body=JSON.stringify(exportData());
+  const res=isGAS(S.syncUrl)?await fetch(S.syncUrl,{method:"POST",body}):await fetch(S.syncUrl,{method:"PUT",headers:{"Content-Type":"application/json"},body});
+  if(!res.ok)throw new Error(res.status);S.lastSync=now();save();render();if(!silent)toast("☁️ 已推送到雲端");
+ }catch(e){if(!silent)toast("推送失敗：請確認網址正確，且 Apps Script 已部署為「所有人」可存取")}
+}
+function checkReminders(){
+ const n=Date.now();let fired=false;
+ S.events.forEach(e=>{
+  if(e.rem==null||e.rem<0)return;
+  if(e.rf&&!e.rfd)e.rfd=e.date;
+  [-1,0,1].forEach(k=>{
+   const d=addDays(today(),k);
+   if(!occursOn(e,d)||(e.rfd&&e.rfd>=d))return;
+   const t=new Date(d+"T"+(e.start||"09:00")+":00").getTime();
+   if(n<t-e.rem*60000)return;
+   e.rfd=d;fired=true;
+   if(n>t+6*3600000)return;
+   const diff=Math.round((t-n)/60000),when=diff>0?`${diff} 分鐘後`:"已經開始";
+   const who=e.who==="both"?"屁屁、吐吐":S.players[e.who].name;
+   const txt=`⏰ 提醒 ${who}：「${e.title}」${when}${e.start?"（"+e.start+"）":""}${e.loc?" 📍"+e.loc:""}`;
+   toast(txt,12000);logAdd(txt.replace("⏰ ",""));
+   try{if("Notification" in window&&Notification.permission==="granted")new Notification("屁吐星球",{body:txt})}catch(x){}
+  });
+ });
+ if(fired){save();render()}
+}
+setInterval(checkReminders,20000);
+window.addEventListener("storage",e=>{if(e.key===KEY){S=load();render()}});
+setInterval(()=>{if(S.syncUrl&&navigator.onLine&&!$("#modal").innerHTML)pull(true)},60000);
+
+render();
+checkReminders();
+if(S.syncUrl)pull(true);
+</script>
+</body>
+</html>
