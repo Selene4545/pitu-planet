@@ -219,7 +219,7 @@ function flushEvo(){
 /* ============ 畫面 ============ */
 function render(){
  save();
- $("#app").innerHTML=trainersHtml()+`<div class="tabs">${[["tasks","📋 家庭任務"],["cal","📅 行事曆確認"],["dex","📖 夥伴圖鑑"],["set","⚙️ 同步／設定"]].map(([k,n])=>`<button class="tab ${S.tab===k?"on":""}" data-act="tab" data-k="${k}">${n}</button>`).join("")}</div><div class="box">${S.tab==="tasks"?tasksHtml():S.tab==="cal"?calHtml():S.tab==="dex"?dexHtml():setHtml()}</div>`;
+ $("#app").innerHTML=trainersHtml()+`<div class="tabs">${[["tasks","📋 家庭任務"],["cal",calIcon()+" 行事曆確認"],["dex","📖 夥伴圖鑑"],["set","⚙️ 同步／設定"]].map(([k,n])=>`<button class="tab ${S.tab===k?"on":""}" data-act="tab" data-k="${k}">${n}</button>`).join("")}</div><div class="box">${S.tab==="tasks"?tasksHtml():S.tab==="cal"?calHtml():S.tab==="dex"?dexHtml():setHtml()}</div>`;
  $("#syncst").textContent=S.syncUrl&&S.lastSync?`　☁️ 上次同步 ${new Date(S.lastSync).toLocaleTimeString()}`:"";
 }
 function trainersHtml(){
@@ -238,6 +238,8 @@ function trainersHtml(){
 }
 const whoTag=w=>`<span class="who ${w}">${w==="both"?"一起":S.players[w].name}</span>`;
 const XPD={1:10,2:20,3:40};
+const CALDATE="Dec 24";
+const calIcon=(h=22)=>`<svg viewBox="0 0 44 36" height="${h}" width="${Math.round(h*44/36)}" style="vertical-align:-5px" xmlns="http://www.w3.org/2000/svg"><rect x="1.5" y="3" width="41" height="31" rx="5" fill="#fff" stroke="#1b1b2f" stroke-width="3"/><path d="M1.5 8a5 5 0 0 1 5-5h31a5 5 0 0 1 5 5v5h-41z" fill="#ee4b4b" stroke="#1b1b2f" stroke-width="3" stroke-linejoin="round"/><rect x="11" y="0" width="4" height="8" rx="2" fill="#1b1b2f"/><rect x="29" y="0" width="4" height="8" rx="2" fill="#1b1b2f"/><text x="22" y="29" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12.5" font-weight="900" fill="#1b1b2f" textLength="34" lengthAdjust="spacingAndGlyphs">${CALDATE}</text></svg>`;
 const GAS_CODE=`var P=PropertiesService.getScriptProperties(),N=2500;
 function doGet(){var n=+P.getProperty("n")||0,s="";for(var i=0;i<n;i++)s+=P.getProperty("c"+i)||"";return ContentService.createTextOutput(s||"{}").setMimeType(ContentService.MimeType.JSON)}
 function doPost(e){var l=LockService.getScriptLock();l.waitLock(15000);try{var s=e.postData.contents,old=+P.getProperty("n")||0,n=Math.ceil(s.length/N),o={n:String(n)};for(var i=0;i<n;i++)o["c"+i]=s.substr(i*N,N);P.setProperties(o);for(var j=n;j<old;j++)P.deleteProperty("c"+j);return ContentService.createTextOutput('{"ok":true}').setMimeType(ContentService.MimeType.JSON)}finally{l.releaseLock()}}`;
@@ -339,6 +341,9 @@ function setHtml(){
  <label>同步網址</label><input id="syncUrl" value="${esc(S.syncUrl)}" placeholder="https://script.google.com/macros/s/…/exec">
  <div class="bar2" style="margin-top:8px"><button class="btn b" data-act="saveUrl">儲存網址</button><button class="btn g" data-act="pull">⬇ 立即拉取</button><button class="btn y" data-act="push">⬆ 推送上傳</button></div>
  <hr><b>💾 備份</b><div class="bar2" style="margin-top:6px"><button class="btn" data-act="export">匯出 JSON</button><button class="btn" data-act="import">匯入 JSON（合併）</button><input type="file" id="file" accept=".json,application/json" style="display:none"></div>
+ <hr><b>🔄 重置經驗值</b>
+ <div class="sm">只會把 XP 歸零，夥伴退回第 1 型態；金幣、完成件數、任務與行程都會保留。</div>
+ <div class="bar2" style="margin-top:6px"><button class="btn r" data-act="resetXp" data-pid="pp">重置${esc(S.players.pp.name)}（目前 ${S.players.pp.xp} XP）</button><button class="btn r" data-act="resetXp" data-pid="tt">重置${esc(S.players.tt.name)}（目前 ${S.players.tt.xp} XP）</button><button class="btn r" data-act="resetXp" data-pid="all">兩人都重置</button></div>
  <hr><b>👤 名稱</b><div class="two"><div><label>玩家一</label><input id="n_pp" value="${esc(S.players.pp.name)}"></div><div><label>玩家二</label><input id="n_tt" value="${esc(S.players.tt.name)}"></div></div>
  <div class="bar2" style="margin-top:8px"><button class="btn b" data-act="saveNames">儲存名稱</button><button class="btn r" data-act="reset">重置全部資料</button></div>`;
 }
@@ -359,7 +364,7 @@ function taskForm(){
 }
 function eventForm(e){
  e=e||{title:"",date:cal.sel,start:"",end:"",loc:"",who:"both",note:"",rem:30,rep:"none",repEnd:""};
- modal(`<h3>📅 ${e.id?"編輯":"新增"}行程</h3><form data-form="event" data-id="${e.id||""}">
+ modal(`<h3>${calIcon(24)} ${e.id?"編輯":"新增"}行程</h3><form data-form="event" data-id="${e.id||""}">
   <label>行程名稱</label><input name="title" required maxlength="40" value="${esc(e.title)}">
   <div class="three"><div><label>日期</label><input type="date" name="date" required value="${e.date}"></div><div><label>開始</label><input type="time" name="start" value="${e.start}"></div><div><label>結束</label><input type="time" name="end" value="${e.end}"></div></div>
   <div class="two"><div><label>地點</label><input name="loc" value="${esc(e.loc)}"></div><div><label>參與者</label><select name="who"><option value="both" ${e.who==="both"?"selected":""}>兩人</option><option value="pp" ${e.who==="pp"?"selected":""}>${esc(S.players.pp.name)}</option><option value="tt" ${e.who==="tt"?"selected":""}>${esc(S.players.tt.name)}</option></select></div></div>
@@ -411,6 +416,11 @@ document.addEventListener("submit",ev=>{
 /* ============ 行為 ============ */
 function delItem(k,id){S[k]=S[k].filter(x=>x.id!==id);S.deleted[id]=now()}
 
+function ask(msg,yes){
+ modal(`<h3>${esc(msg)}</h3><div class="bar2" style="margin-top:14px"><button class="btn r" id="askY">確定</button><button class="btn" data-act="closeModal">取消</button></div>`);
+ $("#askY").onclick=()=>{closeModal();yes()};
+}
+const done_=()=>{render();schedulePush()};
 const ACT={
  tab:b=>{S.tab=b.k},
  active:b=>{S.active=b.pid;},
@@ -425,25 +435,32 @@ const ACT={
   toast(`✔「${t.title}」完成！${t.doneBy} 獲得 ${xp} XP`);
   if(t.repeat!=="none")S.tasks.push({...t,id:uid(),done:false,doneBy:"",due:addDays(t.due,t.repeat==="daily"?1:7),u:now()});
  },
- delTask:b=>{if(confirm("刪除這個任務？"))delItem("tasks",b.id)},
+ delTask:b=>{ask("刪除這個任務？",()=>{delItem("tasks",b.id);done_()});return"noRender"},
  calPrev:()=>{cal.m--;if(cal.m<0){cal.m=11;cal.y--}},
  calNext:()=>{cal.m++;if(cal.m>11){cal.m=0;cal.y++}},
  selDay:b=>{cal.sel=b.d},
  addEvent:()=>eventForm(),
  editEvent:b=>eventForm(S.events.find(x=>x.id===b.id)),
- delEvent:b=>{const e=S.events.find(x=>x.id===b.id);if(confirm(e&&e.rep&&e.rep!=="none"?"這是重複行程，會刪除整個系列，確定嗎？":"刪除這個行程？"))delItem("events",b.id)},
+ delEvent:b=>{const e=S.events.find(x=>x.id===b.id);ask(e&&e.rep&&e.rep!=="none"?"這是重複行程，會刪除整個系列，確定嗎？":"刪除這個行程？",()=>{delItem("events",b.id);done_()});return"noRender"},
  pick:(b,ev)=>{ev.preventDefault();ev.stopPropagation();pickForm(b.pid);return"noRender"},
  choose:b=>{S.players[b.pid].sp=b.id;S.players[b.pid].u=now();closeModal();const sp=findSp(b.id);toast(`${S.players[b.pid].name}選擇了 ${sp.line}！`)},
  addSpecies:()=>speciesForm(),
  editSpecies:b=>speciesForm(S.custom.find(x=>x.id===b.id)),
  delSpecies:b=>{
-  if(S.custom.length<=1){toast("至少要保留一個夥伴");return}
-  if(!confirm("刪除這個夥伴？使用中的玩家會自動換成圖鑑第一個夥伴。"))return;
-  delItem("custom",b.id);
-  PID.forEach(p=>{if(!findSp(S.players[p].sp)){S.players[p].sp=S.custom[0].id;S.players[p].u=now()}})},
+  if(S.custom.length<=1){toast("至少要保留一個夥伴");return"noRender"}
+  ask("刪除這個夥伴？使用中的玩家會自動換成圖鑑第一個夥伴。",()=>{
+   delItem("custom",b.id);
+   PID.forEach(p=>{if(!findSp(S.players[p].sp)){S.players[p].sp=S.custom[0].id;S.players[p].u=now()}});done_()});
+  return"noRender"},
  restoreSp:()=>{let n=0;BUILTIN.forEach(b=>{if(!S.custom.some(c=>c.id===b.id)){delete S.deleted[b.id];S.custom.push({...b,u:now()});n++}});toast(n?`已恢復 ${n} 個內建夥伴`:"內建夥伴都在圖鑑裡")},
  menu:(b,ev)=>{const el=ev.target.closest(".sp").querySelector(".menu"),was=el.classList.contains("open");document.querySelectorAll(".menu.open").forEach(x=>x.classList.remove("open"));if(!was)el.classList.add("open");return"noRender"},
  copyGas:()=>{const done=()=>toast("已複製程式碼");if(navigator.clipboard)navigator.clipboard.writeText(GAS_CODE).then(done,()=>{});else{const t=document.createElement("textarea");t.value=GAS_CODE;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();done()}return"noRender"},
+ resetXp:b=>{
+  const ids=b.pid==="all"?PID:[b.pid],names=ids.map(p=>S.players[p].name).join("、");
+  ask(`確定要把 ${names} 的經驗值歸零嗎？夥伴會退回第 1 型態。`,()=>{
+   ids.forEach(p=>{S.players[p].xp=0;S.players[p].u=now()});
+   logAdd(`${names} 的經驗值已重置為 0`);toast(`${names} 的經驗值已歸零`);done_()});
+  return"noRender"},
  closeModal:()=>closeModal(),
  closeBg:(b,ev)=>{if(ev.target.classList.contains("modalbg"))closeModal();return"noRender"},
  saveUrl:()=>{S.syncUrl=$("#syncUrl").value.trim();toast("網址已儲存");if(S.syncUrl)pull(true)},
@@ -454,7 +471,7 @@ const ACT={
   a.download="屁吐星球-備份-"+today()+".json";a.click();return"noRender"},
  import:()=>{$("#file").click();return"noRender"},
  saveNames:()=>{S.players.pp.name=$("#n_pp").value.trim()||"屁屁";S.players.tt.name=$("#n_tt").value.trim()||"吐吐";PID.forEach(p=>S.players[p].u=now());toast("名稱已更新")},
- reset:()=>{if(confirm("確定要清除所有資料並重來？")){localStorage.removeItem(KEY);location.reload()}return"noRender"}
+ reset:()=>{ask("確定要清除所有資料並重來？",()=>{localStorage.removeItem(KEY);location.reload()});return"noRender"}
 };
 document.addEventListener("click",ev=>{
  if(!ev.target.closest(".more,.menu"))document.querySelectorAll(".menu.open").forEach(x=>x.classList.remove("open"));
